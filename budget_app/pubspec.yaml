@@ -1,0 +1,36 @@
+name: budget_app
+description: A new Flutter project.
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 0.0.1+1
+
+environment:
+  sdk: '>=2.18.4 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  english_words: ^4.0.0
+  provider: ^6.0.0
+  equatable: ^2.0.0
+  path_provider: ^2.0.1
+  sqflite:
+  intl: 0.17.0-nullsafety.2
+  flutter_iconpicker:
+    git:
+      url: https://github.com/kechankrisna/FlutterIconPicker
+      ref: hotfix
+  reflectable:
+  
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+  build_runner:
+
+flutter:
+  uses-material-design: true
