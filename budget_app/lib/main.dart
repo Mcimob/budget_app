@@ -1,9 +1,7 @@
 import 'package:budget_app/homepage.dart';
 import 'package:flutter/material.dart';
-import 'main.reflectable.dart';
 
 void main() {
-  initializeReflectable();
   runApp(MyApp());
 }
 

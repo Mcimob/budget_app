@@ -1,10 +1,8 @@
-import 'package:budget_app/models/category.dart';
+import 'package:budget_app/models/model.dart';
 import 'package:flutter/material.dart';
-import 'package:budget_app/reflector.dart';
 
-@reflector
 class CategoryWidget extends StatelessWidget {
-  final CategoryModel item;
+  final CategoryModelGen item;
   const CategoryWidget({Key? key, required this.item}) : super(key: key);
 
   @override

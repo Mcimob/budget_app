@@ -1,10 +1,8 @@
-import 'package:budget_app/models/wallet.dart';
-import 'package:budget_app/reflector.dart';
+import 'package:budget_app/models/model.dart';
 import 'package:flutter/material.dart';
 
-@reflector
 class WalletWidget extends StatelessWidget {
-  final WalletModel item;
+  final WalletModelGen item;
   const WalletWidget({Key? key, required this.item}) : super(key: key);
 
   @override

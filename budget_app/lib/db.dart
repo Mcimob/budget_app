@@ -1,8 +1,5 @@
 import 'package:budget_app/app_const.dart';
-import 'package:budget_app/models/category.dart';
-import 'package:budget_app/models/entry.dart';
 import 'package:budget_app/models/model.dart';
-import 'package:budget_app/models/wallet.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:intl/intl.dart';
@@ -67,13 +64,13 @@ class DatabaseRepository {
     try {
       final db = await database;
       switch (o.runtimeType) {
-        case EntryModel:
+        case EntryModelGen:
           db.insert('entries', map);
           break;
-        case WalletModel:
+        case WalletModelGen:
           db.insert('wallets', map);
           break;
-        case CategoryModel:
+        case CategoryModelGen:
           db.insert('categories', map);
           break;
       }
@@ -82,26 +79,27 @@ class DatabaseRepository {
     }
   }
 
-  Future<List<CategoryModel>> getAllCategories() async {
+  /*
+  Future<List<CategoryModelGen>> getAllCategories() async {
     final db = await instance.database;
     final result = await db.query('categories');
-    return result.map((json) => CategoryModel.fromJson(json)).toList();
+    return result.map((json) => CategoryModelGen.fromJson(json)).toList();
   }
 
-  Future<List<WalletModel>> getAllWallets() async {
+  Future<List<WalletModelGen>> getAllWallets() async {
     final db = await instance.database;
     final result = await db.query('wallets');
-    return result.map((json) => WalletModel.fromJson(json)).toList();
-  }
+    return result.map((json) => WalletModelGen.fromJson(json)).toList();
+  }*/
 
   Future<List<Model>> getAllOfType<T extends Model>() async {
     final db = await instance.database;
     final result = await db.query(AppConst.table_name_dict[T]!);
-    if (T == CategoryModel) {
-      return result.map((json) => CategoryModel.fromJson(json)).toList();
+    if (T == CategoryModelGen) {
+      return result.map((json) => CategoryModelGen.fromJson(json)).toList();
     }
-    if (T == WalletModel) {
-      return result.map((json) => WalletModel.fromJson(json)).toList();
+    if (T == WalletModelGen) {
+      return result.map((json) => WalletModelGen.fromJson(json)).toList();
     }
     throw Exception();
   }

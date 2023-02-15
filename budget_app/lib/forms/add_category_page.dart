@@ -1,5 +1,5 @@
 import 'package:budget_app/db.dart';
-import 'package:budget_app/models/category.dart';
+import 'package:budget_app/models/model.dart';
 import 'package:budget_app/widgets/category_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
@@ -13,7 +13,7 @@ class AddCategoryPage extends StatefulWidget {
 
 class AddCategoryPageState extends State<AddCategoryPage> {
   final titleController = TextEditingController();
-  List<CategoryModel> cats = [];
+  List<Model> cats = [];
   bool _submitted = false;
 
   void _submit() {
@@ -32,7 +32,9 @@ class AddCategoryPageState extends State<AddCategoryPage> {
   }
 
   void getCategories() async {
-    await DatabaseRepository.instance.getAllCategories().then((value) {
+    await DatabaseRepository.instance
+        .getAllOfType<CategoryModelGen>()
+        .then((value) {
       setState(() {
         cats = value;
       });
@@ -42,7 +44,7 @@ class AddCategoryPageState extends State<AddCategoryPage> {
   void addCategory() async {
     if (titleController.text.isEmpty) {}
     FocusScope.of(context).requestFocus(new FocusNode());
-    CategoryModel cat = CategoryModel(title: titleController.text);
+    CategoryModelGen cat = CategoryModelGen(title: titleController.text);
     await DatabaseRepository.instance.insert(o: cat);
     ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Adding Category "${titleController.text}"')));
@@ -131,7 +133,8 @@ class AddCategoryPageState extends State<AddCategoryPage> {
                     ),
                     padding: EdgeInsets.all(_paddingWidth),
                     itemBuilder: (context, index) {
-                      return CategoryWidget(item: cats[index]);
+                      return CategoryWidget(
+                          item: cats[index] as CategoryModelGen);
                     },
                     itemCount: cats.length,
                   ),

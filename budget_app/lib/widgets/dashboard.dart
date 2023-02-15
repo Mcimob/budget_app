@@ -1,4 +1,4 @@
-import 'package:budget_app/models/category.dart';
+import 'package:budget_app/models/model.dart';
 import 'package:budget_app/widgets/category_widget.dart';
 import 'package:budget_app/db.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +11,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class DashboardState extends State<Dashboard> {
-  List<CategoryModel> cats = [];
+  List<dynamic> cats = [];
 
   @override
   initState() {
@@ -25,7 +25,9 @@ class DashboardState extends State<Dashboard> {
   }
 
   void getCategories() async {
-    await DatabaseRepository.instance.getAllCategories().then((value) {
+    await DatabaseRepository.instance
+        .getAllOfType<CategoryModelGen>()
+        .then((value) {
       setState(() {
         cats = value;
       });

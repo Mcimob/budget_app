@@ -1,6 +1,6 @@
 import 'package:budget_app/forms/add_category_page.dart';
 import 'package:budget_app/forms/add_entry_form.dart';
-import 'package:budget_app/forms/new_add_page.dart';
+import 'package:budget_app/forms/add_wallet_page.dart';
 import 'package:flutter/material.dart';
 
 class AddPage extends StatefulWidget {
@@ -46,7 +46,7 @@ class AddPageState extends State<AddPage> with TickerProviderStateMixin {
         children: [
           AddEntryForm(),
           AddCategoryPage(),
-          NewAddPage(),
+          AddWalletPage(),
         ],
       ),
     );

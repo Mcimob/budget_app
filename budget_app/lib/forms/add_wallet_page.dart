@@ -1,5 +1,5 @@
 import 'package:budget_app/db.dart';
-import 'package:budget_app/models/wallet.dart';
+import 'package:budget_app/models/model.dart';
 import 'package:budget_app/widgets/wallet_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +12,7 @@ class AddWalletPage extends StatefulWidget {
 
 class AddWalletPageState extends State<AddWalletPage> {
   final titleController = TextEditingController();
-  List<WalletModel> wallets = [];
+  List<Model> wallets = [];
   bool _submitted = false;
 
   void _submit() {
@@ -31,7 +31,9 @@ class AddWalletPageState extends State<AddWalletPage> {
   }
 
   void getWallets() async {
-    await DatabaseRepository.instance.getAllWallets().then((value) {
+    await DatabaseRepository.instance
+        .getAllOfType<WalletModelGen>()
+        .then((value) {
       setState(() {
         wallets = value;
       });
@@ -41,8 +43,8 @@ class AddWalletPageState extends State<AddWalletPage> {
   void addWallet() async {
     if (titleController.text.isEmpty) {}
     FocusScope.of(context).requestFocus(new FocusNode());
-    WalletModel cat = WalletModel(title: titleController.text);
-    await DatabaseRepository.instance.insert(o: cat);
+    WalletModelGen wallet = WalletModelGen(title: titleController.text);
+    await DatabaseRepository.instance.insert(o: wallet);
     ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Adding Wallet "${titleController.text}"')));
     titleController.text = "";
@@ -112,7 +114,8 @@ class AddWalletPageState extends State<AddWalletPage> {
                     ),
                     padding: EdgeInsets.all(_paddingWidth),
                     itemBuilder: (context, index) {
-                      return WalletWidget(item: wallets[index]);
+                      return WalletWidget(
+                          item: wallets[index] as WalletModelGen);
                     },
                     itemCount: wallets.length,
                   ),
