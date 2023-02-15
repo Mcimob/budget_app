@@ -5,6 +5,8 @@ class CategoryWidget extends StatelessWidget {
   final CategoryModelGen item;
   const CategoryWidget({Key? key, required this.item}) : super(key: key);
 
+  _editCategory() {}
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -16,10 +18,12 @@ class CategoryWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(item.title),
-          Builder(
-            builder: (context) {
-              return item.date != null ? Text(item.date as String) : Text("");
-            },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Icon(IconData(item.iconId, fontFamily: item.iconFontFamily)),
+              IconButton(onPressed: _editCategory, icon: Icon(Icons.edit)),
+            ],
           )
         ],
       ),

@@ -44,7 +44,10 @@ class AddCategoryPageState extends State<AddCategoryPage> {
   void addCategory() async {
     if (titleController.text.isEmpty) {}
     FocusScope.of(context).requestFocus(new FocusNode());
-    CategoryModelGen cat = CategoryModelGen(title: titleController.text);
+    CategoryModelGen cat = CategoryModelGen(
+        title: titleController.text,
+        iconId: _icon.icon?.codePoint ?? 0,
+        iconFontFamily: _icon.icon?.fontFamily ?? 'MaterialIcons');
     await DatabaseRepository.instance.insert(o: cat);
     ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Adding Category "${titleController.text}"')));
@@ -76,7 +79,7 @@ class AddCategoryPageState extends State<AddCategoryPage> {
 
   final double _paddingWidth = 16;
 
-  Icon? _icon = Icon(IconData(0xe25a, fontFamily: 'MaterialIcons'));
+  Icon _icon = Icon(IconData(0xe25a, fontFamily: 'MaterialIcons'));
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +101,7 @@ class AddCategoryPageState extends State<AddCategoryPage> {
                         hintText: 'Think of some descriptive title',
                         errorText: _submitted ? _errorText : null,
                         suffixIcon: IconButton(
-                          icon: _icon ?? Container(),
+                          icon: _icon,
                           onPressed: _pickIcon,
                         ),
                       ),

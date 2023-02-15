@@ -2,6 +2,7 @@ import 'package:budget_app/db.dart';
 import 'package:budget_app/models/model.dart';
 import 'package:budget_app/widgets/wallet_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 
 class AddWalletPage extends StatefulWidget {
   @override
@@ -43,7 +44,10 @@ class AddWalletPageState extends State<AddWalletPage> {
   void addWallet() async {
     if (titleController.text.isEmpty) {}
     FocusScope.of(context).requestFocus(new FocusNode());
-    WalletModelGen wallet = WalletModelGen(title: titleController.text);
+    WalletModelGen wallet = WalletModelGen(
+        title: titleController.text,
+        iconId: _icon.icon?.codePoint ?? 0,
+        iconFontFamily: _icon.icon?.fontFamily ?? 'MaterialIcons');
     await DatabaseRepository.instance.insert(o: wallet);
     ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Adding Wallet "${titleController.text}"')));
@@ -65,7 +69,17 @@ class AddWalletPageState extends State<AddWalletPage> {
     super.dispose();
   }
 
+  _pickIcon() async {
+    IconData? icon = await FlutterIconPicker.showIconPicker(context,
+        iconPackModes: [IconPack.material]);
+    _icon = Icon(icon);
+    setState(() {});
+    debugPrint("icon selected");
+  }
+
   final double _paddingWidth = 16;
+
+  Icon _icon = Icon(IconData(0xee33, fontFamily: 'MaterialIcons'));
 
   @override
   Widget build(BuildContext context) {
@@ -80,10 +94,18 @@ class AddWalletPageState extends State<AddWalletPage> {
               children: [
                 Column(
                   children: [
-                    WalletTitleFormField(
-                        titleController: titleController,
-                        submitted: _submitted,
-                        errorText: _errorText),
+                    TextFormField(
+                      controller: titleController,
+                      decoration: InputDecoration(
+                        label: Text('Wallet Title'),
+                        hintText: 'Think of some descriptive title',
+                        errorText: _submitted ? _errorText : null,
+                        suffixIcon: IconButton(
+                          icon: _icon,
+                          onPressed: _pickIcon,
+                        ),
+                      ),
+                    ),
                     MaterialButton(
                       color: Colors.black,
                       height: 50,
@@ -125,32 +147,6 @@ class AddWalletPageState extends State<AddWalletPage> {
           ),
         );
       },
-    );
-  }
-}
-
-class WalletTitleFormField extends StatelessWidget {
-  const WalletTitleFormField({
-    super.key,
-    required this.titleController,
-    required bool submitted,
-    required String? errorText,
-  })  : _submitted = submitted,
-        _errorText = errorText;
-
-  final TextEditingController titleController;
-  final bool _submitted;
-  final String? _errorText;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: titleController,
-      decoration: InputDecoration(
-        label: Text('Wallet Title'),
-        hintText: 'Think of some descriptive title',
-        errorText: _submitted ? _errorText : null,
-      ),
     );
   }
 }

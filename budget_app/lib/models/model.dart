@@ -11,6 +11,8 @@ class WalletModel {
   int? id;
   String title = 'default';
   String? date;
+  int iconId = 0;
+  String iconFontFamily = 'default';
 }
 
 @generateModel
@@ -18,6 +20,8 @@ class CategoryModel {
   int? id;
   String title = 'default';
   String? date;
+  int iconId = 0;
+  String iconFontFamily = 'default';
 }
 
 @generateModel

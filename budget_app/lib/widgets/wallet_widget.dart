@@ -16,11 +16,7 @@ class WalletWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(item.title),
-          Builder(
-            builder: (context) {
-              return item.date != null ? Text(item.date as String) : Text("");
-            },
-          )
+          Icon(IconData(item.iconId, fontFamily: item.iconFontFamily)),
         ],
       ),
     );

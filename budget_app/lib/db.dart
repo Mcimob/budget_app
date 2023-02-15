@@ -24,19 +24,26 @@ class DatabaseRepository {
     return await openDatabase(path, version: 1, onCreate: _createDB);
   }
 
-  Future _createDB(Database db, int version) async {
+  _createDB(Database db, int version) async {
+    //await db.execute('Drop table categories;');
+    //await db.execute('drop table wallets;');
+    //await db.execute('drop table entries;');
     await db.execute('''
     create table categories (
       id integer primary key autoincrement,
       title text not null,
-      date text not null
+      date text not null,
+      iconId integer not null,
+      iconFontFamily text not null
     );
     ''');
     await db.execute('''
     create table wallets (
       id integer primary key autoincrement,
       title text not null,
-      date text not null
+      date text not null,
+      iconId integer not null,
+      iconFontFamily text not null
     );
     ''');
     await db.execute('''
@@ -78,19 +85,6 @@ class DatabaseRepository {
       print(e.toString());
     }
   }
-
-  /*
-  Future<List<CategoryModelGen>> getAllCategories() async {
-    final db = await instance.database;
-    final result = await db.query('categories');
-    return result.map((json) => CategoryModelGen.fromJson(json)).toList();
-  }
-
-  Future<List<WalletModelGen>> getAllWallets() async {
-    final db = await instance.database;
-    final result = await db.query('wallets');
-    return result.map((json) => WalletModelGen.fromJson(json)).toList();
-  }*/
 
   Future<List<Model>> getAllOfType<T extends Model>() async {
     final db = await instance.database;

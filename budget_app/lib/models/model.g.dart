@@ -11,15 +11,21 @@ class WalletModelGen implements Model {
     this.id,
     required this.title,
     this.date,
+    required this.iconId,
+    required this.iconFontFamily,
   });
   int? id;
   String title;
   String? date;
+  int iconId;
+  String iconFontFamily;
   factory WalletModelGen.fromJson(Map<String, dynamic> map) {
     return WalletModelGen(
       id: map["id"],
       title: map["title"],
       date: map["date"],
+      iconId: map["iconId"],
+      iconFontFamily: map["iconFontFamily"],
     );
   }
   @override
@@ -28,6 +34,8 @@ class WalletModelGen implements Model {
       "id": id,
       "title": title,
       "date": date,
+      "iconId": iconId,
+      "iconFontFamily": iconFontFamily,
     };
   }
 }
@@ -37,15 +45,21 @@ class CategoryModelGen implements Model {
     this.id,
     required this.title,
     this.date,
+    required this.iconId,
+    required this.iconFontFamily,
   });
   int? id;
   String title;
   String? date;
+  int iconId;
+  String iconFontFamily;
   factory CategoryModelGen.fromJson(Map<String, dynamic> map) {
     return CategoryModelGen(
       id: map["id"],
       title: map["title"],
       date: map["date"],
+      iconId: map["iconId"],
+      iconFontFamily: map["iconFontFamily"],
     );
   }
   @override
@@ -54,6 +68,8 @@ class CategoryModelGen implements Model {
       "id": id,
       "title": title,
       "date": date,
+      "iconId": iconId,
+      "iconFontFamily": iconFontFamily,
     };
   }
 }
