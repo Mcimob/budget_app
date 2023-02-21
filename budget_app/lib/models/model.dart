@@ -1,11 +1,19 @@
 import 'package:annotations/annotations.dart';
 
+import 'package:budget_app/widgets/text_input_methods.dart';
+import 'package:budget_app/db.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_iconpicker/flutter_iconpicker.dart';
+import 'package:sqflite/sqflite.dart';
+
 part 'model.g.dart';
 
 abstract class Model {
   Map<String, dynamic> toMap();
+  int? id;
 }
 
+@generateModelWidget
 @generateModel
 class WalletModel {
   int? id;
@@ -13,8 +21,10 @@ class WalletModel {
   String? date;
   int iconId = 0;
   String iconFontFamily = 'default';
+  int? lastState = 0;
 }
 
+@generateModelWidget
 @generateModel
 class CategoryModel {
   int? id;
@@ -22,6 +32,7 @@ class CategoryModel {
   String? date;
   int iconId = 0;
   String iconFontFamily = 'default';
+  int? lastState = 0;
 }
 
 @generateModel

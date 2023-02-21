@@ -12,9 +12,11 @@ class AddWalletPage extends StatefulWidget {
 }
 
 class AddWalletPageState extends State<AddWalletPage> {
+  final Icon defaultIcon = Icon(IconData(0xee33, fontFamily: 'MaterialIcons'));
   final titleController = TextEditingController();
   List<Model> wallets = [];
   bool _submitted = false;
+  Icon? _icon;
 
   void _submit() {
     setState(() => _submitted = true);
@@ -46,12 +48,18 @@ class AddWalletPageState extends State<AddWalletPage> {
     FocusScope.of(context).requestFocus(new FocusNode());
     WalletModelGen wallet = WalletModelGen(
         title: titleController.text,
-        iconId: _icon.icon?.codePoint ?? 0,
-        iconFontFamily: _icon.icon?.fontFamily ?? 'MaterialIcons');
+        iconId: _icon != null
+            ? _icon!.icon!.codePoint
+            : defaultIcon.icon!.codePoint,
+        iconFontFamily: _icon != null
+            ? _icon!.icon!.fontFamily!
+            : defaultIcon.icon!.fontFamily!,
+        lastState: 0);
     await DatabaseRepository.instance.insert(o: wallet);
     ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Adding Wallet "${titleController.text}"')));
     titleController.text = "";
+    _icon = defaultIcon;
     getWallets();
   }
 
@@ -77,9 +85,12 @@ class AddWalletPageState extends State<AddWalletPage> {
     debugPrint("icon selected");
   }
 
-  final double _paddingWidth = 16;
+  delete(Model o) async {
+    await DatabaseRepository.instance.delete(o: o);
+    getWallets();
+  }
 
-  Icon _icon = Icon(IconData(0xee33, fontFamily: 'MaterialIcons'));
+  final double _paddingWidth = 16;
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +112,7 @@ class AddWalletPageState extends State<AddWalletPage> {
                         hintText: 'Think of some descriptive title',
                         errorText: _submitted ? _errorText : null,
                         suffixIcon: IconButton(
-                          icon: _icon,
+                          icon: _icon != null ? _icon! : defaultIcon,
                           onPressed: _pickIcon,
                         ),
                       ),
@@ -136,8 +147,10 @@ class AddWalletPageState extends State<AddWalletPage> {
                     ),
                     padding: EdgeInsets.all(_paddingWidth),
                     itemBuilder: (context, index) {
-                      return WalletWidget(
-                          item: wallets[index] as WalletModelGen);
+                      return WalletModelGenWidget(
+                        item: wallets[index] as WalletModelGen,
+                        delete: delete,
+                      );
                     },
                     itemCount: wallets.length,
                   ),

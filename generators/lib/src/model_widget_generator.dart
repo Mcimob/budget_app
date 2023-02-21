@@ -1,23 +1,34 @@
-import 'package:budget_app/models/model.dart';
-import 'package:budget_app/widgets/text_input_methods.dart';
-import 'package:budget_app/db.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_iconpicker/flutter_iconpicker.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:build/src/builder/build_step.dart';
+import 'package:analyzer/dart/element/element.dart';
+import 'package:source_gen/source_gen.dart';
 
-class CategoryWidget extends StatefulWidget {
-  final CategoryModelGen item;
+import 'package:annotations/annotations.dart';
+
+import 'model_visitor.dart';
+
+class ModelWidgetGenerator
+    extends GeneratorForAnnotation<ModelWidgetAnnotation> {
+  @override
+  generateForAnnotatedElement(
+      Element element, ConstantReader annotation, BuildStep buildStep) {
+    final visitor = ModelVisitor();
+    element.visitChildren(visitor);
+
+    final classString = '''
+
+class ${visitor.className}GenWidget extends StatefulWidget {
+  final ${visitor.className}Gen item;
   final ValueChanged<Model> delete;
-  CategoryWidget({Key? key, required this.item, required this.delete})
+  ${visitor.className}GenWidget({Key? key, required this.item, required this.delete})
       : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return CategoryWidgetState();
+    return ${visitor.className}GenWidgetState();
   }
 }
 
-class CategoryWidgetState extends State<CategoryWidget> {
+class ${visitor.className}GenWidgetState extends State<${visitor.className}GenWidget> {
   final titleController = TextEditingController();
   bool inEditMode = false;
   Icon? _icon;
@@ -37,7 +48,7 @@ class CategoryWidgetState extends State<CategoryWidget> {
     super.dispose();
   }
 
-  _editCategory() {
+  _edit${visitor.className}() {
     setState(() {
       inEditMode = !inEditMode;
     });
@@ -66,7 +77,7 @@ class CategoryWidgetState extends State<CategoryWidget> {
   }
 
   _save_and_close() async {
-    _editCategory();
+    _edit${visitor.className}();
     await _save();
   }
 
@@ -91,7 +102,7 @@ class CategoryWidgetState extends State<CategoryWidget> {
           children: [
             Icon(IconData(widget.item.iconId,
                 fontFamily: widget.item.iconFontFamily)),
-            IconButton(onPressed: _editCategory, icon: Icon(Icons.edit)),
+            IconButton(onPressed: _edit${visitor.className}, icon: Icon(Icons.edit)),
           ],
         )
       ],
@@ -111,7 +122,7 @@ class CategoryWidgetState extends State<CategoryWidget> {
               child: TextFormField(
                 controller: titleController,
                 decoration: InputDecoration(
-                  label: Text('Category Title'),
+                  label: Text('${visitor.className} Title'),
                   hintText: 'Think of some descriptive title',
                   errorText: TextInputMethods.errorText(titleController),
                 ),
@@ -123,7 +134,7 @@ class CategoryWidgetState extends State<CategoryWidget> {
             ),
             IconButton(
               icon: Icon(Icons.cancel),
-              onPressed: _editCategory,
+              onPressed: _edit${visitor.className},
             ),
             IconButton(
               icon: Icon(Icons.delete),
@@ -131,5 +142,11 @@ class CategoryWidgetState extends State<CategoryWidget> {
             ),
           ]);
         });
+  }
+}
+
+    ''';
+
+    return classString;
   }
 }

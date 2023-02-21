@@ -43,7 +43,10 @@ class DashboardState extends State<Dashboard> {
         ),
         padding: EdgeInsets.all(16),
         itemBuilder: (context, index) {
-          return CategoryWidget(item: cats[index]);
+          return CategoryWidget(
+            item: cats[index],
+            delete: (value) => {},
+          );
         },
         itemCount: cats.length,
       ),

@@ -1,10 +1,13 @@
 import 'package:budget_app/db.dart';
 import 'package:budget_app/models/model.dart';
 import 'package:budget_app/widgets/category_widget.dart';
+import 'package:budget_app/widgets/text_input_methods.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 
 class AddCategoryPage extends StatefulWidget {
+  AddCategoryPage({Key? key}) : super(key: key);
+
   @override
   AddCategoryPageState createState() {
     return AddCategoryPageState();
@@ -12,13 +15,10 @@ class AddCategoryPage extends StatefulWidget {
 }
 
 class AddCategoryPageState extends State<AddCategoryPage> {
+  final Icon defaultIcon = Icon(IconData(0xe25a, fontFamily: 'MaterialIcons'));
   final titleController = TextEditingController();
   List<Model> cats = [];
   bool _submitted = false;
-
-  void _submit() {
-    setState(() => _submitted = true);
-  }
 
   @override
   initState() {
@@ -46,21 +46,23 @@ class AddCategoryPageState extends State<AddCategoryPage> {
     FocusScope.of(context).requestFocus(new FocusNode());
     CategoryModelGen cat = CategoryModelGen(
         title: titleController.text,
-        iconId: _icon.icon?.codePoint ?? 0,
-        iconFontFamily: _icon.icon?.fontFamily ?? 'MaterialIcons');
+        iconId: _icon != null
+            ? _icon!.icon!.codePoint
+            : defaultIcon.icon!.codePoint,
+        iconFontFamily: _icon != null
+            ? _icon!.icon!.fontFamily!
+            : defaultIcon.icon!.fontFamily!,
+        lastState: 0);
     await DatabaseRepository.instance.insert(o: cat);
     ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Adding Category "${titleController.text}"')));
     titleController.text = "";
+    _icon = defaultIcon;
     getCategories();
   }
 
   String? get _errorText {
-    final text = titleController.text;
-    if (text.isEmpty) {
-      return 'Title can\'t be empty';
-    }
-    return null;
+    return TextInputMethods.errorText(titleController);
   }
 
   @override
@@ -71,15 +73,21 @@ class AddCategoryPageState extends State<AddCategoryPage> {
 
   _pickIcon() async {
     IconData? icon = await FlutterIconPicker.showIconPicker(context,
-        iconPackModes: [IconPack.material]);
+            iconPackModes: [IconPack.material]) ??
+        defaultIcon.icon;
     _icon = Icon(icon);
     setState(() {});
     debugPrint("icon selected");
   }
 
+  delete(Model o) async {
+    await DatabaseRepository.instance.delete(o: o);
+    getCategories();
+  }
+
   final double _paddingWidth = 16;
 
-  Icon _icon = Icon(IconData(0xe25a, fontFamily: 'MaterialIcons'));
+  Icon? _icon;
 
   @override
   Widget build(BuildContext context) {
@@ -94,17 +102,23 @@ class AddCategoryPageState extends State<AddCategoryPage> {
               children: [
                 Column(
                   children: [
-                    TextFormField(
-                      controller: titleController,
-                      decoration: InputDecoration(
-                        label: Text('Category Title'),
-                        hintText: 'Think of some descriptive title',
-                        errorText: _submitted ? _errorText : null,
-                        suffixIcon: IconButton(
-                          icon: _icon,
+                    Row(
+                      children: [
+                        Flexible(
+                          child: TextFormField(
+                            controller: titleController,
+                            decoration: InputDecoration(
+                              label: Text('Category Title'),
+                              hintText: 'Think of some descriptive title',
+                              errorText: _submitted ? _errorText : null,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          icon: _icon ?? defaultIcon,
                           onPressed: _pickIcon,
                         ),
-                      ),
+                      ],
                     ),
                     MaterialButton(
                       color: Colors.black,
@@ -130,14 +144,17 @@ class AddCategoryPageState extends State<AddCategoryPage> {
                   ],
                 ),
                 Expanded(
+                  key: UniqueKey(),
                   child: ListView.separated(
                     separatorBuilder: (context, index) => const SizedBox(
                       height: 20,
                     ),
                     padding: EdgeInsets.all(_paddingWidth),
                     itemBuilder: (context, index) {
-                      return CategoryWidget(
-                          item: cats[index] as CategoryModelGen);
+                      return CategoryModelGenWidget(
+                        item: cats[index] as CategoryModelGen,
+                        delete: delete,
+                      );
                     },
                     itemCount: cats.length,
                   ),

@@ -20,21 +20,19 @@ class DatabaseRepository {
   Future<Database> _initDB(String filePath) async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-
+    //databaseFactory.deleteDatabase(path);
     return await openDatabase(path, version: 1, onCreate: _createDB);
   }
 
   _createDB(Database db, int version) async {
-    //await db.execute('Drop table categories;');
-    //await db.execute('drop table wallets;');
-    //await db.execute('drop table entries;');
     await db.execute('''
     create table categories (
       id integer primary key autoincrement,
       title text not null,
       date text not null,
       iconId integer not null,
-      iconFontFamily text not null
+      iconFontFamily text not null,
+      lastState integer not null
     );
     ''');
     await db.execute('''
@@ -43,7 +41,8 @@ class DatabaseRepository {
       title text not null,
       date text not null,
       iconId integer not null,
-      iconFontFamily text not null
+      iconFontFamily text not null,
+      lastState integer not null
     );
     ''');
     await db.execute('''
@@ -65,25 +64,21 @@ class DatabaseRepository {
     var formatter = DateFormat('yyy-MM-dd');
     String formattedDate = formatter.format(now);
 
-    Map<String, dynamic> map = (o).toMap();
+    Map<String, dynamic> map = o.toMap();
     map.update('date', (value) => formattedDate, ifAbsent: () => formattedDate);
 
     try {
       final db = await database;
-      switch (o.runtimeType) {
-        case EntryModelGen:
-          db.insert('entries', map);
-          break;
-        case WalletModelGen:
-          db.insert('wallets', map);
-          break;
-        case CategoryModelGen:
-          db.insert('categories', map);
-          break;
-      }
+      db.insert(AppConst.table_name_dict[o.runtimeType]!, map);
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  Future<void> delete({required Model o}) async {
+    final db = await database;
+    db.delete(AppConst.table_name_dict[o.runtimeType]!,
+        where: 'id = ?', whereArgs: [o.id]);
   }
 
   Future<List<Model>> getAllOfType<T extends Model>() async {
@@ -96,5 +91,15 @@ class DatabaseRepository {
       return result.map((json) => WalletModelGen.fromJson(json)).toList();
     }
     throw Exception();
+  }
+
+  Future<void> update({required Model o}) async {
+    final db = await instance.database;
+    await db.update(
+      AppConst.table_name_dict[o.runtimeType]!,
+      o.toMap(),
+      where: "id = ?",
+      whereArgs: [o.id],
+    );
   }
 }

@@ -10,7 +10,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   static List<Widget> _pages = <Widget>[
-    Dashboard(),
+    //Dashboard(),
+    Container(),
     AddPage(),
     Icon(
       Icons.settings,
