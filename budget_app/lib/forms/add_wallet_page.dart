@@ -1,6 +1,5 @@
 import 'package:budget_app/db.dart';
 import 'package:budget_app/models/model.dart';
-import 'package:budget_app/widgets/wallet_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 

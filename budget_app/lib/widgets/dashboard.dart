@@ -1,5 +1,4 @@
 import 'package:budget_app/models/model.dart';
-import 'package:budget_app/widgets/category_widget.dart';
 import 'package:budget_app/db.dart';
 import 'package:flutter/material.dart';
 
@@ -36,20 +35,6 @@ class DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView.separated(
-        separatorBuilder: (context, index) => const SizedBox(
-          height: 20,
-        ),
-        padding: EdgeInsets.all(16),
-        itemBuilder: (context, index) {
-          return CategoryWidget(
-            item: cats[index],
-            delete: (value) => {},
-          );
-        },
-        itemCount: cats.length,
-      ),
-    );
+    return Icon(Icons.dashboard);
   }
 }
